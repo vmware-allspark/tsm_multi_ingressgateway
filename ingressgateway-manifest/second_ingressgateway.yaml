@@ -1,0 +1,386 @@
+---
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: second-istio-ingressgateway
+  namespace: istio-system
+  labels:
+    chart: gateways
+    heritage: Tiller
+    release: istio
+    app: second-istio-ingressgateway
+    istio: second-ingressgateway
+spec:
+  maxReplicas: 5
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: second-istio-ingressgateway
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: 80
+---
+---
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: second-istio-ingressgateway
+  namespace: istio-system
+  labels:
+    chart: gateways
+    heritage: Tiller
+    release: istio
+    app: second-istio-ingressgateway
+    istio: second-ingressgateway
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      release: istio
+      app: second-istio-ingressgateway
+      istio: second-ingressgateway
+---
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: second-istio-ingressgateway
+  namespace: istio-system
+  annotations:
+  labels:
+    chart: gateways
+    heritage: Tiller
+    release: istio
+    app: second-istio-ingressgateway
+    istio: second-ingressgateway
+spec:
+  type: LoadBalancer
+  selector:
+    release: istio
+    app: second-istio-ingressgateway
+    istio: second-ingressgateway
+  ports:
+    -
+      name: status-port
+      port: 15020
+      targetPort: 15020
+    -
+      name: http2
+      port: 80
+      targetPort: 80
+    -
+      name: https
+      port: 443
+    -
+      name: tcp
+      port: 31400
+    -
+      name: https-kiali
+      port: 15029
+      targetPort: 15029
+    -
+      name: https-prometheus
+      port: 15030
+      targetPort: 15030
+    -
+      name: https-grafana
+      port: 15031
+      targetPort: 15031
+    -
+      name: https-tracing
+      port: 15032
+      targetPort: 15032
+---
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: second-istio-ingressgateway-service-account
+  namespace: istio-system
+  labels:
+    app: second-istio-ingressgateway
+    chart: gateways
+    heritage: Tiller
+    release: istio
+---
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: istio-second-multicluster-ingressgateway
+  namespace: istio-system
+  labels:
+    app: gateways
+    chart: gateways
+    heritage: Tiller
+    release: istio
+spec:
+  selector:
+    app: second-istio-ingressgateway
+    istio: second-ingressgateway
+  servers:
+  - hosts:
+    - "*.global"
+    port:
+      name: tls
+      number: 443
+      protocol: TLS
+    tls:
+      mode: AUTO_PASSTHROUGH
+---
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: second-istio-ingressgateway
+  namespace: istio-system
+  labels:
+    app: second-istio-ingressgateway
+    chart: gateways
+    heritage: Tiller
+    istio: ingressgateway
+    release: istio
+spec:
+  selector:
+    matchLabels:
+      app: second-istio-ingressgateway
+      istio: second-ingressgateway
+  strategy:
+    rollingUpdate:
+      maxSurge: 100%
+      maxUnavailable: 25%
+  template:
+    metadata:
+      labels:
+        app: second-istio-ingressgateway
+        chart: gateways
+        heritage: Tiller
+        istio: second-ingressgateway
+        release: istio
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      serviceAccountName: second-istio-ingressgateway-service-account
+      containers:
+        - name: istio-proxy
+          image: "docker.io/vmwareallspark/proxyv2:1.4.7-custom"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 15020
+            - containerPort: 80
+            - containerPort: 443
+            - containerPort: 31400
+            - containerPort: 15029
+            - containerPort: 15030
+            - containerPort: 15031
+            - containerPort: 15032
+            - containerPort: 15090
+              protocol: TCP
+              name: http-envoy-prom
+          args:
+          - proxy
+          - router
+          - --domain
+          - $(POD_NAMESPACE).svc.cluster.local
+          - --log_output_level=default:info
+          - --drainDuration
+          - '45s' #drainDuration
+          - --parentShutdownDuration
+          - '1m0s' #parentShutdownDuration
+          - --connectTimeout
+          - '10s' #connectTimeout
+          - --serviceCluster
+          - second-istio-ingressgateway
+          - --zipkinAddress
+          - zipkin:9411
+          - --proxyAdminPort
+          - "15000"
+          - --statusPort
+          - "15020"
+          - --controlPlaneAuthPolicy
+          - MUTUAL_TLS
+          - --discoveryAddress
+          - istio-pilot:15011
+          readinessProbe:
+            failureThreshold: 30
+            httpGet:
+              path: /healthz/ready
+              port: 15020
+              scheme: HTTP
+            initialDelaySeconds: 1
+            periodSeconds: 2
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: 2000m
+              memory: 1024Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          env:
+          - name: NODE_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: spec.nodeName
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: INSTANCE_IP
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.podIP
+          - name: HOST_IP
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.hostIP
+          - name: SERVICE_ACCOUNT
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.serviceAccountName
+          - name: ISTIO_META_POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: ISTIO_META_CONFIG_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: ISTIO_METAJSON_LABELS
+            value: |
+              {"app":"second-istio-ingressgateway","chart":"gateways","heritage":"Tiller","istio":"second-ingressgateway","release":"istio"}
+          - name: ISTIO_META_CLUSTER_ID
+            value: "Kubernetes"
+          - name: SDS_ENABLED
+            value: "false"
+          - name: ISTIO_META_WORKLOAD_NAME
+            value: second-istio-ingressgateway
+          - name: ISTIO_META_OWNER
+            value: kubernetes://apis/apps/v1/namespaces/istio-system/deployments/second-istio-ingressgateway
+          - name: ISTIO_META_ROUTER_MODE
+            value: sni-dnat
+          volumeMounts:
+          - name: istio-certs
+            mountPath: /etc/certs
+            readOnly: true
+          - name: ingressgateway-certs
+            mountPath: "/etc/istio/ingressgateway-certs"
+            readOnly: true
+          - name: ingressgateway-ca-certs
+            mountPath: "/etc/istio/ingressgateway-ca-certs"
+            readOnly: true
+      volumes:
+      - name: istio-certs
+        secret:
+          secretName: istio.istio-ingressgateway-service-account
+          optional: true
+      - name: ingressgateway-certs
+        secret:
+          secretName: "istio-ingressgateway-certs"
+          optional: true
+      - name: ingressgateway-ca-certs
+        secret:
+          secretName: "istio-ingressgateway-ca-certs"
+          optional: true
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - "amd64"
+                - "ppc64le"
+                - "s390x"
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 2
+            preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - "amd64"
+          - weight: 2
+            preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - "ppc64le"
+          - weight: 2
+            preference:
+              matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - "s390x"
+---
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: second-istio-ingressgateway-sds
+  namespace: istio-system
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "watch", "list"]
+---
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: second-istio-ingressgateway-sds
+  namespace: istio-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: second-istio-ingressgateway-sds
+subjects:
+- kind: ServiceAccount
+  name: second-istio-ingressgateway-service-account
+---
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: second-istio-multicluster-ingressgateway
+  namespace: istio-system
+  labels:
+    app: gateways
+    chart: gateways
+    heritage: Tiller
+    release: istio
+spec:
+  workloadLabels:
+    app: second-istio-ingressgateway
+    istio: second-ingressgateway
+  filters:
+  - listenerMatch:
+      portNumber: 443
+      listenerType: GATEWAY
+    insertPosition:
+      index: AFTER
+      relativeTo: envoy.filters.network.sni_cluster
+    filterName: envoy.filters.network.tcp_cluster_rewrite
+    filterType: NETWORK
+    filterConfig:
+      cluster_pattern: "\\.global$"
+      cluster_replacement: ".svc.cluster.local"
+---
+
