@@ -6,6 +6,10 @@ Manifest to deploy additional ingress gateways in Tanzu Service Mesh managed clu
 3) By default TSM creates one istio ingressgateway deployment per cluster, however for some usecases Customers might want multiple istio ingressgateway. 
 4) For scenarios where second ingressgateways are needed, peform "kubectl apply -f ingressgateway-manifest/second-ingressgateway.yaml" to deploy a second ingressgateway. 
 5) For more than two ingressgateways, replace "second" in the yaml with different prefix to add more ingressgateways. 
+6) For attaching gateway or other objects to the second-ingressgateway, use the selector 
+spec:
+  selector:
+    istio: second-ingressgateway
 
 
 
