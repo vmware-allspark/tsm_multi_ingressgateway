@@ -63,7 +63,6 @@ In the following section lets explore a usecase where we have two multi-cluster 
   - On cluster-2
     ``` kubectl label ns default istio-injection=enabled
         kubectl apply -f acme_fitness_demo/kubernetes-manifests/secrets.yaml
-        kubectl apply -f acme_fitness_demo/istio-manifests/gateway.yaml
         kubectl apply -f acme_fitness_demo/kubernetes-manifests/acme_fitness_cluster2.yaml
      ```
   
@@ -75,8 +74,43 @@ In the following section lets explore a usecase where we have two multi-cluster 
         $ kubectl get svc -n istio-system second-istio-ingressgateway
           NAME                          TYPE           CLUSTER-IP       EXTERNAL-IP                                                              PORT(S)                                                                                                                      AGE
          second-istio-ingressgateway   LoadBalancer   100.65.128.188   a9cc4586ea0f611eaada402d26df238b-823012376.us-west-2.elb.amazonaws.com   15020:32170/TCP,80:32388/TCP,443:31142/TCP,31400:31164/TCP,15029:30173/TCP,15030:31063/TCP,15031:32682/TCP,15032:30968/TCP   11h
+         $ curl -s "http://a9cc4586ea0f611eaada402d26df238b-823012376.us-west-2.elb.amazonaws.com/" | grep -o "<title>.*</title>"
+         <title>ACME Fitness</title>
          
      ```
+  6) Create gateway and virtual-service for accessing acme app. Attach the gateway to "second-ingressgateway"
+  
+      ``` 
+        Edit acme_fitness_demo/istio-manifests/gateway.yaml and change 
+        
+        selector:
+        istio: ingressgateway 
+        
+        to
+        
+        selector:
+        istio: second-ingressgateway 
+        
+        kubectl apply -f acme_fitness_demo/istio-manifests/gateway.yaml
+           
+     ```
+     
+   7) Check if you are able to access ACME app through the second-ingressgateway
+   
+         ``` 
+          $ kubectl get svc -n istio-system second-istio-ingressgateway
+          NAME                          TYPE           CLUSTER-IP       EXTERNAL-IP                                                              PORT(S)                                                                                                                      AGE
+         second-istio-ingressgateway   LoadBalancer   100.65.128.188   a9cc4586ea0f611eaada402d26df238b-823012376.us-west-2.elb.amazonaws.com   15020:32170/TCP,80:32388/TCP,443:31142/TCP,31400:31164/TCP,15029:30173/TCP,15030:31063/TCP,15031:32682/TCP,15032:30968/TCP   11h
+         $ curl -s "http://a9cc4586ea0f611eaada402d26df238b-823012376.us-west-2.elb.amazonaws.com/" | grep -o "<title>.*</title>"
+         <title>ACME Fitness</title>
+           
+       ```
+   
+
+  
+  
+  
+  
   
       
   
