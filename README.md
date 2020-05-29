@@ -21,14 +21,28 @@ In the following section lets explore a usecase where we have two multi-cluster 
   - On cluster-1 
      ```kubectl label ns bookinfo istio-injection=enabled
         kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.6/samples/bookinfo/platform/kube/bookinfo.yaml -l app!=details,account!=details -n bookinfo
+        
+        $ kubectl get pods -n bookinfo --context=kaliappanm-prod-c1.k8s.local
+        NAME                             READY   STATUS    RESTARTS   AGE
+        productpage-v1-bcb4488d6-9swqt   2/2     Running   0          19h
+        ratings-v1-7bdfd65ccc-9lhkf      2/2     Running   0          26h
+        reviews-v1-5c5b7b9f8d-fg5fr      2/2     Running   0          26h
+        reviews-v2-569796655b-7mlfr      2/2     Running   0          26h
+        reviews-v3-844bc59d88-5rpsm      2/2     Running   0          26h
+        
      ```
   
   - On cluster-2 
      ```kubectl label ns bookinfo istio-injection=enabled
         kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.6/samples/bookinfo/platform/kube/bookinfo.yaml -l app=details -n bookinfo
         kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.6/samples/bookinfo/platform/kube/bookinfo.yaml -l account=detail -n bookinfo
+        
+        $ kubectl get pods -n bookinfo --context=kaliappanm-prod-c2.k8s.local
+        NAME                          READY   STATUS    RESTARTS   AGE
+        details-v1-7f66769fdf-whw8w   2/2     Running   0          19h
+        
       ```
-3) Deploy gateway and virtualservice for accessing bookinfo through through the default ingressgateway deployed by TSM. Apply the following on cluster-1
+3) Deploy gateway and virtualservice for accessing bookinfo through the default ingressgateway deployed by TSM. Apply the following on cluster-1
 
     ``` 
     kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.6/samples/bookinfo/networking/bookinfo-gateway.yaml -n bookinfo
@@ -60,7 +74,6 @@ In the following section lets explore a usecase where we have two multi-cluster 
   - On cluster-1
      ``` kubectl label ns default istio-injection=enabled
          kubectl apply -f acme_fitness_demo/kubernetes-manifests/secrets.yaml
-         kubectl apply -f acme_fitness_demo/istio-manifests/gateway.yaml
          kubectl apply -f acme_fitness_demo/kubernetes-manifests/acme_fitness_cluster1.yaml
     ```
   - On cluster-2
