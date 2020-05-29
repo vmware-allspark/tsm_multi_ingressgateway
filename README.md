@@ -99,6 +99,14 @@ In the following section lets explore a usecase where we have two multi-cluster 
          <title>ACME Fitness</title>
            
        ```
+       
+   8) Now that both the applications are accesible through their own ingressgateways, we need to Create two GNS in TSM to make cross-cluster communication work the applicatins. 
+   
+   9) Create "acme" GNS and include the "default" namespace on both the clusters. We are using "demo.acme.com" as GNS domain name. So edit the shopping deployment on default namespace of Cluster-1 and change the environment variable CATALOG_HOST to catalog.demo.acme.com.
+   
+   10) Create "bookinfo" GNS and include the "bookinfo" namespace on both the clusters. We are using "demo.bookinfo.com" as GNS domain name. So edit the productpage deployment on bookinfo namespace of Cluster-1 and change the add environment variable.
+   
+   
    
 
   
