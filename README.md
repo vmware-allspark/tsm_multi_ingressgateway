@@ -104,6 +104,8 @@ In the following section lets explore a usecase where we have two multi-cluster 
    
    9) Create "acme" GNS and include the "default" namespace on both the clusters. We are using "demo.acme.com" as GNS domain name. So edit the shopping deployment on default namespace of Cluster-1 and change the environment variable CATALOG_HOST to catalog.demo.acme.com.
    
+   ![Alt text](/images/shopping_edit.png?raw=true "Optional Title")
+   
    10) Create "bookinfo" GNS and include the "bookinfo" namespace on both the clusters. We are using "demo.bookinfo.com" as GNS domain name. So edit the productpage deployment on bookinfo namespace of Cluster-1 and change the add environment variable.
    
    
