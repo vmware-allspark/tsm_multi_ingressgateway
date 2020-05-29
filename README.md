@@ -34,7 +34,8 @@ In the following section lets explore a usecase where we have two multi-cluster 
     ```
 4) Check if you are able to access the bookinfo app through the ingressgateway:
 
-    ``` $ kubectl get svc -n istio-system istio-ingressgateway
+    ``` 
+    $ kubectl get svc -n istio-system istio-ingressgateway
     NAME                   TYPE           CLUSTER-IP       EXTERNAL-IP                                                               PORT(S)                                                                                                                      AGE
     istio-ingressgateway   LoadBalancer   100.71.100.126   aa3a9e4489d1d11eaada402d26df238b-2032527493.us-west-2.elb.amazonaws.com   15020:31573/TCP,80:32316/TCP,443:31686/TCP,31400:30371/TCP,15029:30374/TCP,15030:30828/TCP,15031:30262/TCP,15032:32554/TCP   5d9h
     ```
