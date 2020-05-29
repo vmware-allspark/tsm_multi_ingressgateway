@@ -141,6 +141,8 @@ In the following section lets explore a usecase where we have two multi-cluster 
        
    8) Now that both the applications are accesible through their own ingressgateways, we need to Create two GNS in TSM to make cross-cluster communication work the applicatins. 
    
+   ![Alt text](/images/cluster1_view.png?raw=true)
+   
    9) Create "acme" GNS and include the "default" namespace on both the clusters. We are using "demo.acme.com" as GNS domain name. 
    
    ![Alt text](/images/acme_gns.png?raw=true)
