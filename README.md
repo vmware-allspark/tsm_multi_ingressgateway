@@ -13,7 +13,10 @@ Manifest to deploy additional ingress gateways in Tanzu Service Mesh managed clu
 In the following section lets explore a usecase where we have two multi-cluster applications deployed in their own namespaces and using one ingressgateway per application to access the frontend microservice of the application. 
 
 1) Onboard two clusters to TSM. 
-2) Lets split bookinfo app and install 
+2) Lets split bookinfo app and install all the apps except details in cluster-1 bookinfo namespace and install details on cluster-2 bookinfo namespace. 
+  a) On cluster-1 kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.6/samples/bookinfo/platform/kube/bookinfo.yaml -l app!=details,account!=details -n bookinfo
+  b) On cluster-2 kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.6/samples/bookinfo/platform/kube/bookinfo.yaml -l app!=details -n bookinfo and kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.6/samples/bookinfo/platform/kube/bookinfo.yaml -l account=detail -n bookinfo
+  
 
 
 
