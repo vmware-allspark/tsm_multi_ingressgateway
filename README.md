@@ -13,6 +13,9 @@ Manifest to deploy additional ingress gateways in Tanzu Service Mesh managed clu
 In the following section lets explore a usecase where we have two multi-cluster applications deployed in their own namespaces and using one ingressgateway per application to access the frontend microservice of the application. 
 
 1) Onboard two clusters to TSM. 
+
+![Alt text](/images/two_clusters.png?raw=true)
+
 2) Lets split bookinfo app and install all the apps except details in cluster-1 bookinfo namespace and install details on cluster-2 bookinfo namespace. 
 
   - On cluster-1 
@@ -104,7 +107,7 @@ In the following section lets explore a usecase where we have two multi-cluster 
    
    9) Create "acme" GNS and include the "default" namespace on both the clusters. We are using "demo.acme.com" as GNS domain name. So edit the shopping deployment on default namespace of Cluster-1 and change the environment variable CATALOG_HOST to catalog.demo.acme.com.
    
-   ![Alt text](/images/shopping_edit.png?raw=true "Optional Title")
+   ![Alt text](/images/shopping_edit.png?raw=true)
    
    10) Create "bookinfo" GNS and include the "bookinfo" namespace on both the clusters. We are using "demo.bookinfo.com" as GNS domain name. So edit the productpage deployment on bookinfo namespace of Cluster-1 and change the add environment variable.
    
