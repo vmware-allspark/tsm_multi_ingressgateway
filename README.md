@@ -30,6 +30,11 @@ In the following section lets explore a usecase where we have two multi-cluster 
 4) Lets split acme app and install all the services except catalog in cluster-1 in default namespace and install catalog service in cluster-2 default namespace.
 
   - Clone Acme app:
+     ``` kubectl label ns default istio-injection=enabled
+         kubectl apply -f acme_fitness_demo/kubernetes-manifests/secrets.yaml
+         kubectl apply -f acme_fitness_demo/istio-manifests/gateway.yaml
+         kubectl apply -f acme_fitness_demo/kubernetes-manifests/acme_fitness_cluster1.yaml
+    ```
 
   - On cluster-1
      ``` kubectl label ns default istio-injection=enabled
