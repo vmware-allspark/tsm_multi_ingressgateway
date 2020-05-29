@@ -27,10 +27,9 @@ In the following section lets explore a usecase where we have two multi-cluster 
       ```
 3) Deploy gateway and virtualservice for accessing bookinfo through through the default ingressgateway deployed by TSM. Apply the following on cluster-1
 
-    ``` kubectl label ns default istio-injection=enabled
-         kubectl apply -f acme_fitness_demo/kubernetes-manifests/secrets.yaml
-         kubectl apply -f acme_fitness_demo/istio-manifests/gateway.yaml
-         kubectl apply -f acme_fitness_demo/kubernetes-manifests/acme_fitness_cluster1.yaml
+    ``` 
+    kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.6/samples/bookinfo/networking/bookinfo-gateway.yaml -n bookinfo
+    
     ```
 4) Check if you are able to access the bookinfo app through the ingressgateway:
 
