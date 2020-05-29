@@ -27,6 +27,21 @@ In the following section lets explore a usecase where we have two multi-cluster 
       ```
 3) Deploy gateway and virtualservice for accessing bookinfo through through the default ingressgateway deployed by TSM. Apply the following on cluster-1
 
+    ``` kubectl label ns default istio-injection=enabled
+         kubectl apply -f acme_fitness_demo/kubernetes-manifests/secrets.yaml
+         kubectl apply -f acme_fitness_demo/istio-manifests/gateway.yaml
+         kubectl apply -f acme_fitness_demo/kubernetes-manifests/acme_fitness_cluster1.yaml
+    ```
+4) Check if you are able to access the bookinfo app through the ingressgateway:
+
+    ``` $ kubectl get svc -n istio-system istio-ingressgateway
+    NAME                   TYPE           CLUSTER-IP       EXTERNAL-IP                                                               PORT(S)                                                                                                                      AGE
+    istio-ingressgateway   LoadBalancer   100.71.100.126   aa3a9e4489d1d11eaada402d26df238b-2032527493.us-west-2.elb.amazonaws.com   15020:31573/TCP,80:32316/TCP,443:31686/TCP,31400:30371/TCP,15029:30374/TCP,15030:30828/TCP,15031:30262/TCP,15032:32554/TCP   5d9h
+    ```
+
+    
+
+
 4) Lets split acme app and install all the services except catalog in cluster-1 in default namespace and install catalog service in cluster-2 default namespace.
 
   - Clone Acme app:
