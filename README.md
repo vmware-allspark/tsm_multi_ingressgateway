@@ -26,8 +26,7 @@ In the following section lets explore a usecase where we have two multi-cluster 
         kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.6/samples/bookinfo/platform/kube/bookinfo.yaml -l account=detail -n bookinfo
       ```
 3) Deploy gateway and virtualservice for accessing bookinfo through through the default ingressgateway deployed by TSM. Apply the following on cluster-1
-   
-     ``` kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.6/samples/bookinfo/networking/bookinfo-gateway.yaml -n bookinfo
+   ```kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.6/samples/bookinfo/networking/bookinfo-gateway.yaml -n bookinfo
      ```
 4) Lets split acme app and install all the services except catalog in cluster-1 in default namespace and install catalog service in cluster-2 default namespace.
 
