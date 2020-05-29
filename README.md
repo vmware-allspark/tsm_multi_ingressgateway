@@ -36,10 +36,10 @@ In the following section lets explore a usecase where we have two multi-cluster 
   > kubectl apply -f acme_fitness_demo/kubernetes-manifests/acme_fitness_cluster1.yaml
   
   - On cluster-2
-  > kubectl label ns default istio-injection=enabled
-  > kubectl apply -f acme_fitness_demo/kubernetes-manifests/secrets.yaml
-  > kubectl apply -f acme_fitness_demo/istio-manifests/gateway.yaml
-  > kubectl apply -f acme_fitness_demo/kubernetes-manifests/acme_fitness_cluster2.yaml
+    ''' kubectl label ns default istio-injection=enabled
+        kubectl apply -f acme_fitness_demo/kubernetes-manifests/secrets.yaml
+        kubectl apply -f acme_fitness_demo/istio-manifests/gateway.yaml
+        kubectl apply -f acme_fitness_demo/kubernetes-manifests/acme_fitness_cluster2.yaml'''
   
 4) 
   
