@@ -19,7 +19,7 @@ In the following section lets explore a usecase where we have two multi-cluster 
    <br/>
    <br/>
    
-2) Lets split bookinfo app and install all the apps except details in cluster-1 bookinfo namespace and install details on cluster-2 bookinfo namespace. 
+2) Lets split bookinfo app and install all the microservices except "details" in cluster-1 bookinfo namespace and install "details" on cluster-2 bookinfo namespace. 
 
   - On cluster-1 
      ```kubectl label ns bookinfo istio-injection=enabled
@@ -72,7 +72,7 @@ In the following section lets explore a usecase where we have two multi-cluster 
    <br/>
    <br/>
 
-4) Lets split acme app and install all the services except catalog in cluster-1 in default namespace and install catalog service in cluster-2 default namespace.
+4) Lets split acme app and install all the services except "catalog" in cluster-1 in default namespace and install "catalog" service in cluster-2 default namespace.
 
   - Clone Acme app:
      ``` 
@@ -161,7 +161,7 @@ In the following section lets explore a usecase where we have two multi-cluster 
    <br/>
    <br/>
    
-   8) Now that both the applications are accesible through their own ingressgateways, we need to Create two GNS in TSM to make cross-cluster communication work the applicatins. 
+   8) Now that both the applications are accesible through their own ingressgateways, we need to Create two GNS in TSM to make cross-cluster communication work for the applications. 
    
    ![Alt text](/images/cluster1_view.png?raw=true)
    
@@ -196,7 +196,7 @@ In the following section lets explore a usecase where we have two multi-cluster 
    <br/>
    <br/>
    
-   13) Now cross-cluster communication should be working and bookinfo application is contained on bookinfo namespaces of Cluster-1 and Cluser-2 accessible through the istio-ingressgateway and GNS takes care of cross-cluster communication. 
+   13) Now bookinfo application is contained on bookinfo namespaces of Cluster-1 and Cluser-2. The frontend microservice productpage is accessible through the istio-ingressgateway and GNS takes care of cross-cluster communication. 
    
    ![Alt text](/images/bookinfo_gnsview.png?raw=true)
    
@@ -204,7 +204,7 @@ In the following section lets explore a usecase where we have two multi-cluster 
    <br/>
    <br/>
    
-   14) Acme application is contained on default namespaces of Cluster-1 and Cluster-2 and accesible through second-istio-ingressgateway. 
+   14) Acme application is contained on default namespaces of Cluster-1 and Cluster-2 and accesible through second-istio-ingressgateway. Acme GNS takes care of cross-cluster communication.
    
    ![Alt text](/images/acme_gns_view.png?raw=true)
    
