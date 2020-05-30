@@ -16,6 +16,9 @@ In the following section lets explore a usecase where we have two multi-cluster 
 
 ![Alt text](/images/two_clusters.png?raw=true)
 
+   <br/>
+   <br/>
+   
 2) Lets split bookinfo app and install all the apps except details in cluster-1 bookinfo namespace and install details on cluster-2 bookinfo namespace. 
 
   - On cluster-1 
@@ -31,7 +34,9 @@ In the following section lets explore a usecase where we have two multi-cluster 
         reviews-v3-844bc59d88-5rpsm      2/2     Running   0          26h
         
      ```
-  
+   <br/>
+   <br/>
+   
   - On cluster-2 
      ```kubectl label ns bookinfo istio-injection=enabled
         kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.6/samples/bookinfo/platform/kube/bookinfo.yaml -l app=details -n bookinfo
@@ -42,12 +47,17 @@ In the following section lets explore a usecase where we have two multi-cluster 
         details-v1-7f66769fdf-whw8w   2/2     Running   0          19h
         
       ```
+   <br/>
+   <br/>
+   
 3) Deploy gateway and virtualservice for accessing bookinfo through the default ingressgateway deployed by TSM. Apply the following on cluster-1
 
     ``` 
     kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.6/samples/bookinfo/networking/bookinfo-gateway.yaml -n bookinfo
     
     ```
+   <br/>
+   <br/>
 4) Check if you are able to access the bookinfo app through the ingressgateway:
 
     ``` 
@@ -59,9 +69,8 @@ In the following section lets explore a usecase where we have two multi-cluster 
     <title>Simple Bookstore App</title>
     
     ```
-
-    
-
+   <br/>
+   <br/>
 
 4) Lets split acme app and install all the services except catalog in cluster-1 in default namespace and install catalog service in cluster-2 default namespace.
 
@@ -70,6 +79,7 @@ In the following section lets explore a usecase where we have two multi-cluster 
      git clone  -b dkalani-dev3    https://github.com/vmwarecloudadvocacy/acme_fitness_demo.git
      
     ```
+   <br/>
 
   - On cluster-1
      ``` kubectl label ns default istio-injection=enabled
@@ -93,6 +103,7 @@ In the following section lets explore a usecase where we have two multi-cluster 
             users-7c769bbf68-vjqkq            2/2     Running   0          9d
             users-mongo-cdf54b74d-snw68       2/2     Running   0          9d
     ```
+   <br/>
   - On cluster-2
     ``` kubectl label ns default istio-injection=enabled
         kubectl apply -f acme_fitness_demo/kubernetes-manifests/secrets.yaml
@@ -104,13 +115,19 @@ In the following section lets explore a usecase where we have two multi-cluster 
           catalog-mongo-5f5b55868d-gqzks   2/2     Running   0          24h
           loadgenerator-7dd5fcf578-pvpqc   2/2     Running   0          24h
      ```
-  
+   <br/>
+   <br/>
+   
   5) Create second-ingressgateway on cluster-1:
       
     ``` 
         kubectl apply -f ingressgateway-manifest/second-ingressgateway.yaml
          
      ```
+     
+   <br/>
+   <br/>
+   
   6) Create gateway and virtual-service for accessing acme app. Attach the gateway to "second-ingressgateway"
   
       ``` 
@@ -127,7 +144,9 @@ In the following section lets explore a usecase where we have two multi-cluster 
         kubectl apply -f acme_fitness_demo/istio-manifests/gateway.yaml
            
      ```
-     
+   <br/>
+   <br/>
+   
    7) Check if you are able to access ACME app through the second-ingressgateway
    
          ``` 
@@ -138,28 +157,44 @@ In the following section lets explore a usecase where we have two multi-cluster 
          <title>ACME Fitness</title>
            
        ```
-       
+   
+   <br/>
+   <br/>
+   
    8) Now that both the applications are accesible through their own ingressgateways, we need to Create two GNS in TSM to make cross-cluster communication work the applicatins. 
    
    ![Alt text](/images/cluster1_view.png?raw=true)
+   
+   <br/>
+   <br/>
    
    9) Create "acme" GNS and include the "default" namespace on both the clusters. We are using "demo.acme.com" as GNS domain name. 
    
    ![Alt text](/images/acme_gns.png?raw=true)
    
+   <br/>
+   <br/>
+   
    10) Edit the shopping deployment on default namespace of Cluster-1 and change the environment variable CATALOG_HOST to catalog.demo.acme.com.
    
    ![Alt text](/images/shopping_edit.png?raw=true)
    
+   <br/>
+   <br/>
+   
    11) Create "bookinfo" GNS and include the "bookinfo" namespace on both the clusters. We are using "demo.bookinfo.com" as GNS domain name. 
    
    ![Alt text](/images/bookinfo_gns.png?raw=true)
+ 
+   <br/>
+   <br/>
    
    12) Edit the productpage deployment on bookinfo namespace of Cluster-1 and add environment variable DETAILS_HOSTNAME as below:
    
    ![Alt text](/images/productpage_edit.png?raw=true)
    
-   
+   <br/>
+   <br/>
    
    13) Now cross-cluster communication should be working and bookinfo application is contained on bookinfo namespaces of Cluster-1 and Cluser-2 accessible through the istio-ingressgateway and GNS takes care of cross-cluster communication. 
    
