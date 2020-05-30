@@ -159,9 +159,13 @@ In the following section lets explore a usecase where we have two multi-cluster 
    
    ![Alt text](/images/productpage_edit.png?raw=true)
    
+   
+   
    13) Now cross-cluster communication should be working and bookinfo application is contained on bookinfo namespaces of Cluster-1 and Cluser-2 accessible through the istio-ingressgateway and GNS takes care of cross-cluster communication. 
    
    ![Alt text](/images/bookinfo_gnsview.png?raw=true)
+   
+   
    
    14) Acme application is contained on default namespaces of Cluster-1 and Cluster-2 and accesible through second-istio-ingressgateway. 
    
