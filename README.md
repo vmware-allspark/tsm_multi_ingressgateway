@@ -166,6 +166,8 @@ In the following section lets explore a usecase where we have two multi-cluster 
    ![Alt text](/images/bookinfo_gnsview.png?raw=true)
    
    
+   <br/>
+   <br/>
    
    14) Acme application is contained on default namespaces of Cluster-1 and Cluster-2 and accesible through second-istio-ingressgateway. 
    
