@@ -355,32 +355,5 @@ subjects:
 - kind: ServiceAccount
   name: second-istio-ingressgateway-service-account
 ---
----
-apiVersion: networking.istio.io/v1alpha3
-kind: EnvoyFilter
-metadata:
-  name: second-istio-multicluster-ingressgateway
-  namespace: istio-system
-  labels:
-    app: gateways
-    chart: gateways
-    heritage: Tiller
-    release: istio
-spec:
-  workloadLabels:
-    app: second-istio-ingressgateway
-    istio: second-ingressgateway
-  filters:
-  - listenerMatch:
-      portNumber: 443
-      listenerType: GATEWAY
-    insertPosition:
-      index: AFTER
-      relativeTo: envoy.filters.network.sni_cluster
-    filterName: envoy.filters.network.tcp_cluster_rewrite
-    filterType: NETWORK
-    filterConfig:
-      cluster_pattern: "\\.global$"
-      cluster_replacement: ".svc.cluster.local"
----
+
 
