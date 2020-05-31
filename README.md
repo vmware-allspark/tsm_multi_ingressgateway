@@ -104,8 +104,11 @@ In the following section lets explore a usecase where we have two multi-cluster 
             users-mongo-cdf54b74d-snw68       2/2     Running   0          9d
     ```
    <br/>
+   
   - On cluster-2
-    ``` kubectl label ns default istio-injection=enabled
+  
+    ``` 
+        kubectl label ns default istio-injection=enabled
         kubectl apply -f acme_fitness_demo/kubernetes-manifests/secrets.yaml
         kubectl apply -f acme_fitness_demo/kubernetes-manifests/acme_fitness_cluster2.yaml
         
